@@ -4,10 +4,13 @@ import React, { useState } from 'react';
 import RandomNumber from './components/RandomNumber';
 import RandomList from './components/RandomList';
 import YoloRoll from './components/YoloRoll';
+import SocialSelector from './components/SocialSelector';
+import StakingModal from './components/StakingModal';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState('number');
   const [showYolo, setShowYolo] = useState(false);
+  const [showStaking, setShowStaking] = useState(false);
 
   return (
     <main className="min-h-screen bg-black overflow-x-hidden relative">
@@ -26,7 +29,7 @@ export default function Home() {
               Randoms.WTF
             </h1>
             <p className="font-press-start text-neon-blue text-xs md:text-sm px-2">
-              True Random Generator powered by Flow VRF
+              True Random Generator powered by Verifiable Random Functions
             </p>
           </div>
 
@@ -51,6 +54,15 @@ export default function Home() {
               </div>
             </button>
             <button
+              onClick={() => setActiveTab('social')}
+              className={`relative group ${activeTab === 'social' ? 'scale-105' : ''}`}
+            >
+              <div className={`absolute -inset-0.5 bg-gradient-to-r from-neon-purple to-neon-blue rounded-xl blur opacity-50 group-hover:opacity-75 transition duration-1000 ${activeTab === 'social' ? 'opacity-100' : ''}`}></div>
+              <div className={`relative px-3 py-2 md:px-6 bg-black rounded-xl font-press-start text-xs md:text-sm ${activeTab === 'social' ? 'text-neon-blue' : 'text-white'} group-hover:text-neon-blue transition-all duration-300`}>
+                Social
+              </div>
+            </button>
+            <button
               onClick={() => setShowYolo(true)}
               className="relative group"
             >
@@ -59,18 +71,31 @@ export default function Home() {
                 YOLO
               </div>
             </button>
+            <button
+              onClick={() => setShowStaking(true)}
+              className="relative group"
+            >
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-neon-green to-neon-blue rounded-xl blur opacity-50 group-hover:opacity-75 transition duration-1000"></div>
+              <div className="relative px-3 py-2 md:px-6 bg-black rounded-xl font-press-start text-xs md:text-sm text-white group-hover:text-neon-green transition-all duration-300">
+                Stake
+              </div>
+            </button>
           </div>
 
           {/* Content */}
           <div className="bg-black/50 backdrop-blur-sm rounded-xl border border-white/10 p-4 md:p-6">
             {activeTab === 'number' && <RandomNumber />}
             {activeTab === 'list' && <RandomList />}
+            {activeTab === 'social' && <SocialSelector />}
           </div>
         </div>
       </div>
 
       {/* YOLO Modal */}
       {showYolo && <YoloRoll onClose={() => setShowYolo(false)} />}
+      
+      {/* Staking Modal */}
+      {showStaking && <StakingModal onClose={() => setShowStaking(false)} />}
     </main>
   );
 } 

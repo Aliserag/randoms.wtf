@@ -1,12 +1,13 @@
 # Randomness.WTF
 
-A decentralized random number generator using Flow's on-chain VRF (Verifiable Random Function).
+A decentralized random number generator using on-chain VRF (Verifiable Random Function) across multiple blockchains.
 
 ## Features
 
 - Generate random numbers within a specified range
 - Select random items from a list
-- True randomness powered by Flow's VRF
+- True randomness powered by blockchain VRF
+- Social media giveaway selector for picking winners from Twitter interactions
 
 ## Tech Stack
 
@@ -15,7 +16,8 @@ A decentralized random number generator using Flow's on-chain VRF (Verifiable Ra
 - Tailwind CSS
 - Solidity
 - Hardhat
-- Flow Network
+- Multiple Blockchains
+- Apify Twitter Scraper
 
 ## Getting Started
 
@@ -38,11 +40,11 @@ A decentralized random number generator using Flow's on-chain VRF (Verifiable Ra
     ```bash
     cp .env.example .env
     ```
-    Edit `.env` and add your Flow EVM private key.
+    Edit `.env` and add your private keys and Apify API token.
 
 1. Deploy the smart contract:
     ```bash
-    npx hardhat run scripts/deploy.ts --network flow_testnet
+    npx hardhat run scripts/deploy.ts --network testnet
     ```
 
 1. Run the development server:
@@ -51,6 +53,24 @@ A decentralized random number generator using Flow's on-chain VRF (Verifiable Ra
     ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+## Apify Setup
+
+To use the Social feature for selecting winners from Twitter interactions, you need to set up Apify:
+
+1. Create an account at [apify.com](https://apify.com)
+2. Get your API token from your account settings
+3. Add the token to your `.env.local` file:
+
+```
+APIFY_API_TOKEN=your_api_token_here
+```
+
+The Social feature allows influencers to:
+- Enter a tweet URL
+- Select interaction criteria (follows, retweets, likes)
+- Specify the number of winners to select
+- Randomly choose winners using blockchain VRF
 
 ## Running Tests
 
@@ -62,19 +82,20 @@ npx hardhat test test/*.test.ts
 
 ## Smart Contract
 
-The `RandomnessWTF` contract is [deployed on Testnet](https://evm-testnet.flowscan.io/address/0x91502a85Ad74ba94499145477dccA19b3E1D6124)
-and uses Flow's VRF capabilities to generate true random numbers. The contract provides two main functions:
+The `RandomnessWTF` contract is deployed on multiple testnets
+and uses VRF capabilities to generate true random numbers. The contract provides two main functions:
 
 - `getRandomNumber(uint256 min, uint256 max)`: Generates a random number within the specified range
 - `selectRandomItem(string[] items)`: Selects a random item from an array of strings
 
 ## Resources
 
-For more about using Flow's VRF in your contracts, check out the resources below:
+For more about using VRF in your contracts, check out the resources below:
 
-- [VRF in Solidity](https://developers.flow.com/evm/guides/vrf)
-- [VRF in Cadence](https://developers.flow.com/build/advanced-concepts/randomness)
-- [Commit-Reveal Example Repo in Cadence & Solidity](https://github.com/onflow/random-coin-toss)
+- [VRF in Solidity](https://docs.chain.link/vrf)
+- [VRF Examples](https://en.wikipedia.org/wiki/Verifiable_random_function)
+- [Commit-Reveal Example Repo](https://github.com/ChainSafe/randomness-examples)
+- [Apify Twitter Scraper Documentation](https://apify.com/apidojo/twitter-scraper-lite)
 
 ## Contributing
 

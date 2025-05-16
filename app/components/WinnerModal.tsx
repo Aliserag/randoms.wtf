@@ -22,19 +22,29 @@ const funnyPhrases = [
 
 const emojis = ["🚀", "💎", "🔥", "🌙", "🦍", "🦄", "🧠", "🤑", "🎮", "👾", "🎰", "🎯", "🎁", "✨", "🔮"];
 
-export default function WinnerModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+type WinnerModalProps = {
+  winners: string[];
+  onClose: () => void;
+};
+
+export default function WinnerModal({ winners, onClose }: WinnerModalProps) {
   const [funnyPhrase, setFunnyPhrase] = useState('');
   const [emoji, setEmoji] = useState('');
 
   useEffect(() => {
-    if (isOpen) {
-      // Pick random funny phrase and emoji when modal opens
-      setFunnyPhrase(funnyPhrases[Math.floor(Math.random() * funnyPhrases.length)]);
-      setEmoji(emojis[Math.floor(Math.random() * emojis.length)]);
-    }
-  }, [isOpen]);
+    // Pick random funny phrase and emoji when modal opens
+    setFunnyPhrase(funnyPhrases[Math.floor(Math.random() * funnyPhrases.length)]);
+    setEmoji(emojis[Math.floor(Math.random() * emojis.length)]);
+    
+    // Debug log to ensure we're getting all winners
+    console.log(`WinnerModal received ${winners.length} winners:`, winners);
+  }, [winners]);
 
-  if (!isOpen) return null;
+  // Safety check to ensure we have winners
+  if (!winners || winners.length === 0) {
+    console.error("WinnerModal received empty winners array");
+    return null;
+  }
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
@@ -76,7 +86,7 @@ export default function WinnerModal({ isOpen, onClose }: { isOpen: boolean; onCl
             </div>
             
             <h3 className="font-press-start text-xl text-neon-green mb-4 animate-glow">
-              YOU WIN FREE DEGEN SHIZZLE!
+              {winners.length > 1 ? 'WINNERS SELECTED!' : 'WINNER SELECTED!'}
             </h3>
             
             <div className="relative my-6 py-4 px-4 bg-black/60 border border-neon-pink/40 rounded-lg">
@@ -85,9 +95,27 @@ export default function WinnerModal({ isOpen, onClose }: { isOpen: boolean; onCl
               <div className="absolute -left-1 -bottom-1 w-2 h-2 bg-neon-pink rounded-full"></div>
               <div className="absolute -right-1 -bottom-1 w-2 h-2 bg-neon-pink rounded-full"></div>
               
-              <p className="font-press-start text-neon-blue text-sm leading-relaxed">
-                {funnyPhrase}
-              </p>
+              <div className="space-y-4">
+                {winners.length > 1 ? (
+                  <>
+                    <p className="font-press-start text-neon-blue text-sm leading-relaxed mb-4">
+                      {funnyPhrase}
+                    </p>
+                    <div className="font-press-start text-sm divide-y divide-neon-purple/20">
+                      {winners.map((winner, index) => (
+                        <div key={index} className="py-2 flex items-center justify-between">
+                          <div className="text-neon-green">{index + 1}.</div>
+                          <div className="text-neon-pink">{winner}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                ) : (
+                  <p className="font-press-start text-neon-pink text-xl animate-glow">
+                    {winners[0]}
+                  </p>
+                )}
+              </div>
             </div>
             
             <button
@@ -96,7 +124,7 @@ export default function WinnerModal({ isOpen, onClose }: { isOpen: boolean; onCl
             >
               <div className="absolute -inset-0.5 bg-gradient-to-r from-neon-purple via-neon-pink to-neon-blue rounded-lg blur opacity-50 group-hover:opacity-100 transition duration-1000"></div>
               <div className="relative bg-black px-6 py-3 rounded-lg font-press-start text-sm text-white group-hover:text-neon-blue transition-colors duration-300">
-                SICK BRO!
+                AWESOME!
               </div>
             </button>
           </div>

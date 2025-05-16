@@ -5,7 +5,7 @@ import GoogleAnalytics from './components/GoogleAnalytics';
 
 export const metadata: Metadata = {
   title: 'Randoms.WTF - True Random Generator',
-  description: 'Generate true random numbers and selections using Flow VRF',
+  description: 'Generate true random numbers and selections using Verifiable Random Functions',
   icons: {
     icon: '/dice.gif'
   }

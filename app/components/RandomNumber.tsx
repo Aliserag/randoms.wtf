@@ -1,32 +1,40 @@
 'use client';
 
 import { useState } from 'react';
-import { getRandomNumber } from '../utils/contracts';
-import { RANDOMNESS_CONTRACT_ADDRESS } from '../config/contracts';
+import { getRandomNumber, getCurrentVRFProvider, setVRFProvider } from '../utils/contracts';
 import ResultCard from './ResultCard';
+import { DEFAULT_VRF_PROVIDER, VRFProvider } from '../config/vrf-providers';
+import VRFProviderSelector from './VRFProviderSelector';
 
 export default function RandomNumber() {
   const [min, setMin] = useState<number>(1);
   const [max, setMax] = useState<number>(100);
-  const [result, setResult] = useState<number | null>(null);
+  const [randomNumber, setRandomNumber] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showInfo, setShowInfo] = useState(false);
+  const [vrfProvider, setVRFProviderState] = useState<VRFProvider>(DEFAULT_VRF_PROVIDER);
+
+  const handleProviderChange = (provider: VRFProvider) => {
+    setVRFProviderState(provider);
+    setVRFProvider(provider);
+  };
 
   const generateRandom = async () => {
     if (min >= max) {
-      setError('Maximum must be greater than minimum');
+      setError('Minimum value must be less than maximum value');
       return;
     }
 
+    setLoading(true);
+    setError(null);
+
     try {
-      setLoading(true);
-      setError(null);
-      const randomNumber = await getRandomNumber(min, max);
-      setResult(randomNumber);
-    } catch (error) {
-      console.error('Error generating random number:', error);
-      setError(error instanceof Error ? error.message : 'Failed to generate random number');
+      const result = await getRandomNumber(min, max, vrfProvider);
+      setRandomNumber(result);
+    } catch (err) {
+      console.error('Error generating random number:', err);
+      setError(err instanceof Error ? err.message : 'Failed to generate random number');
     } finally {
       setLoading(false);
     }
@@ -34,46 +42,47 @@ export default function RandomNumber() {
 
   return (
     <div className="space-y-10">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="space-y-3">
-          <label className="block font-press-start text-xs text-neon-blue">
-            Minimum
-          </label>
-          <div className="relative group">
-            <div className="absolute -inset-0.5 bg-gradient-to-r from-neon-pink to-neon-blue rounded-xl blur opacity-30 group-hover:opacity-50 transition duration-1000"></div>
-            <div className="relative">
-              <input
-                type="number"
-                value={min}
-                onChange={(e) => setMin(Number(e.target.value))}
-                className="w-full px-4 py-4 bg-black/50 rounded-xl border border-neon-purple/20 focus:border-neon-blue focus:ring-2 focus:ring-neon-blue/50 focus:outline-none text-neon-green font-press-start text-sm transition-all duration-300"
-                placeholder="1"
-              />
-            </div>
-          </div>
-        </div>
-        <div className="space-y-3">
-          <label className="block font-press-start text-xs text-neon-blue">
-            Maximum
-          </label>
-          <div className="relative group">
-            <div className="absolute -inset-0.5 bg-gradient-to-r from-neon-blue to-neon-pink rounded-xl blur opacity-30 group-hover:opacity-50 transition duration-1000"></div>
-            <div className="relative">
-              <input
-                type="number"
-                value={max}
-                onChange={(e) => setMax(Number(e.target.value))}
-                className="w-full px-4 py-4 bg-black/50 rounded-xl border border-neon-purple/20 focus:border-neon-blue focus:ring-2 focus:ring-neon-blue/50 focus:outline-none text-neon-green font-press-start text-sm transition-all duration-300"
-                placeholder="100"
-              />
-            </div>
+      <div className="space-y-3">
+        <label className="block font-press-start text-xs text-neon-blue">
+          Minimum Value
+        </label>
+        <div className="relative group">
+          <div className="absolute -inset-0.5 bg-gradient-to-r from-neon-pink to-neon-blue rounded-xl blur opacity-30 group-hover:opacity-50 transition duration-1000"></div>
+          <div className="relative">
+            <input
+              type="number"
+              value={min}
+              onChange={(e) => setMin(Number(e.target.value))}
+              className="w-full px-4 py-4 bg-black/50 rounded-xl border border-neon-purple/20 focus:border-neon-blue focus:ring-2 focus:ring-neon-blue/50 focus:outline-none text-neon-green font-press-start text-sm transition-all duration-300"
+              placeholder="1"
+            />
           </div>
         </div>
       </div>
 
+      <div className="space-y-3">
+        <label className="block font-press-start text-xs text-neon-blue">
+          Maximum Value
+        </label>
+        <div className="relative group">
+          <div className="absolute -inset-0.5 bg-gradient-to-r from-neon-blue to-neon-purple rounded-xl blur opacity-30 group-hover:opacity-50 transition duration-1000"></div>
+          <div className="relative">
+            <input
+              type="number"
+              value={max}
+              onChange={(e) => setMax(Number(e.target.value))}
+              className="w-full px-4 py-4 bg-black/50 rounded-xl border border-neon-purple/20 focus:border-neon-blue focus:ring-2 focus:ring-neon-blue/50 focus:outline-none text-neon-green font-press-start text-sm transition-all duration-300"
+              placeholder="100"
+            />
+          </div>
+        </div>
+      </div>
+
+      <VRFProviderSelector selectedProvider={vrfProvider} onSelect={handleProviderChange} />
+
       <button
         onClick={generateRandom}
-        disabled={loading}
+        disabled={loading || min >= max}
         className="relative w-full group"
       >
         <div className="absolute -inset-0.5 bg-gradient-to-r from-neon-purple via-neon-pink to-neon-blue rounded-xl blur opacity-50 group-hover:opacity-75 transition duration-1000 group-disabled:opacity-25 animate-gradient"></div>
@@ -84,14 +93,15 @@ export default function RandomNumber() {
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
               </svg>
-              <span>Waiting for next block...</span>
+              <span>Generating...</span>
             </>
           ) : (
             <>
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M17.6569 16.6569C16.7202 17.5935 14.7616 19.5521 13.4138 20.8999C12.6327 21.681 11.3677 21.6814 10.5866 20.9003C9.26234 19.576 7.34159 17.6553 6.34315 16.6569C3.21895 13.5327 3.21895 8.46734 6.34315 5.34315C9.46734 2.21895 14.5327 2.21895 17.6569 5.34315C20.781 8.46734 20.781 13.5327 17.6569 16.6569Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M15 12C15 13.6569 13.6569 15 12 15C10.3431 15 9 13.6569 9 12C9 10.3431 10.3431 9 12 9C13.6569 9 15 10.3431 15 12Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-              <span>Roll Random Number</span>
+              <span>Generate Random Number</span>
             </>
           )}
         </div>
@@ -103,10 +113,10 @@ export default function RandomNumber() {
         </div>
       )}
 
-      {result !== null && !error && (
+      {randomNumber !== null && !error && (
         <ResultCard type="number">
-          <div className="font-press-start text-5xl md:text-6xl text-neon-green animate-glow">
-            {result}
+          <div className="font-press-start text-center p-4">
+            <span className="text-neon-green animate-glow text-6xl">{randomNumber}</span>
           </div>
         </ResultCard>
       )}
@@ -124,32 +134,32 @@ export default function RandomNumber() {
           {showInfo && (
             <div className="mt-4 space-y-4 text-sm">
               <p className="text-neon-green">
-                This random number generator uses Flow's Verifiable Random Function (VRF) to produce true random numbers that are:
+                This random number generator uses {vrfProvider.name} to produce true random numbers that are:
               </p>
               <ul className="list-disc list-inside space-y-2 text-white">
                 <li>Verifiably random and tamper-proof</li>
                 <li>Generated on-chain for maximum transparency</li>
-                <li>Secured by Flow's consensus mechanism</li>
+                <li>Secured by the {vrfProvider.chainName} network</li>
               </ul>
               <div className="pt-4 space-y-2">
                 <p className="text-neon-pink">Contract Address:</p>
                 <a 
-                  href={`https://evm-testnet.flowscan.io/address/${RANDOMNESS_CONTRACT_ADDRESS}`}
+                  href={`${vrfProvider.blockExplorerUrl}/address/${vrfProvider.contractAddress}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-neon-blue break-all hover:text-neon-green transition-colors duration-300"
                 >
-                  {RANDOMNESS_CONTRACT_ADDRESS}
+                  {vrfProvider.contractAddress}
                 </a>
               </div>
               <div className="pt-4">
                 <a 
-                  href="https://developers.flow.com/evm/guides/vrf"
+                  href={vrfProvider.id === 'default' ? "https://en.wikipedia.org/wiki/Verifiable_random_function" : "#"}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-neon-purple hover:text-neon-pink transition-colors duration-300"
                 >
-                  Learn more about Flow VRF →
+                  Learn more about {vrfProvider.name} →
                 </a>
               </div>
             </div>
