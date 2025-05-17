@@ -430,13 +430,13 @@ export default function SocialSelector() {
           {showInfo && (
             <div className="mt-4 space-y-4 text-sm">
               <p className="text-neon-green">
-                The Social Selector uses Apify's Twitter Scrapers and Default VRF to randomly select winners from tweet interactions:
+                The Social Selector uses Apify's Twitter Scrapers and Flow's VRF to randomly select winners from tweet interactions:
               </p>
               <ul className="list-disc list-inside space-y-2 text-white">
                 <li>Enter a tweet URL from Twitter (now X)</li>
                 <li>Select interaction criteria (Follows, Retweets, Likes)</li>
                 <li>Choose how many winners to select</li>
-                <li>Default VRF ensures fair and provably random selection</li>
+                <li>Flow's VRF ensures fair and provably random selection</li>
               </ul>
               <div className="pt-4 space-y-2">
                 <p className="text-neon-pink">Note about Twitter scraping:</p>

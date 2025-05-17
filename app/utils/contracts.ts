@@ -1,9 +1,9 @@
 import { ethers } from 'ethers';
-import { DEFAULT_VRF_PROVIDER, VRFProvider } from '../config/vrf-providers';
+import { FLOW_VRF_PROVIDER, VRFProvider } from '../config/vrf-providers';
 
 let provider: ethers.Provider | null = null;
 let contract: ethers.Contract | null = null;
-let currentVRFProvider: VRFProvider = DEFAULT_VRF_PROVIDER;
+let currentVRFProvider: VRFProvider = FLOW_VRF_PROVIDER;
 
 // Initialize read-only provider for view functions based on the selected VRF provider
 const initializeReadOnlyProvider = (vrfProvider: VRFProvider = currentVRFProvider) => {
@@ -83,10 +83,8 @@ export const initializeWalletProvider = async (vrfProvider: VRFProvider = curren
 
 function getChainIdForNetwork(networkName: string): string {
   const networks: Record<string, string> = {
-    'Default Testnet': '0x221', // 545 in decimal
-    'Aptos Testnet': '0x2B3',
-    'Bahamut Testnet': '0x334',
-    'Polkadot': '0x7E1'
+    'Flow Testnet': '0x221', // 545 in decimal
+    'Base Goerli Testnet': '0x14A33' // 84531 in decimal
   };
   
   return networks[networkName] || '0x1'; // Default to Ethereum mainnet
@@ -94,10 +92,8 @@ function getChainIdForNetwork(networkName: string): string {
 
 function getNetworkCurrency(networkId: string): { name: string; symbol: string; decimals: number } {
   const currencies: Record<string, { name: string; symbol: string; decimals: number }> = {
-    'default': { name: 'Default Token', symbol: 'TOKEN', decimals: 18 },
-    'aptos': { name: 'Aptos', symbol: 'APT', decimals: 8 },
-    'bahamut': { name: 'BHT', symbol: 'BHT', decimals: 18 },
-    'polkadot': { name: 'DOT', symbol: 'DOT', decimals: 10 }
+    'flow': { name: 'Flow Token', symbol: 'FLOW', decimals: 18 },
+    'base': { name: 'Ethereum', symbol: 'ETH', decimals: 18 }
   };
   
   return currencies[networkId] || { name: 'Ether', symbol: 'ETH', decimals: 18 };

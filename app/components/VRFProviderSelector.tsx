@@ -37,9 +37,9 @@ export default function VRFProviderSelector({ selectedProvider, onSelect }: VRFP
                     width={24}
                     height={24}
                     className="object-contain"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.src = '/images/chains/default.svg';
+                    onError={({ currentTarget }) => {
+                      currentTarget.onerror = null; // prevents looping
+                      currentTarget.src = '/images/chains/flow.svg';
                     }}
                   />
                 </div>
@@ -78,9 +78,9 @@ export default function VRFProviderSelector({ selectedProvider, onSelect }: VRFP
                           width={24}
                           height={24}
                           className="object-contain"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.src = '/images/chains/default.svg';
+                          onError={({ currentTarget }) => {
+                            currentTarget.onerror = null; // prevents looping
+                            currentTarget.src = '/images/chains/flow.svg';
                           }}
                         />
                       </div>

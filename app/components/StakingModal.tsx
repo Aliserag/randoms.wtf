@@ -60,7 +60,7 @@ export default function StakingModal({ onClose }: StakingModalProps) {
               <>
                 <div className="space-y-3">
                   <label className="block font-press-start text-xs text-neon-blue">
-                    Amount to Stake ({vrfProvider.id === 'default' ? 'TOKEN' : vrfProvider.id.toUpperCase()})
+                    Amount to Stake ({vrfProvider.id === 'flow' ? 'FLOW' : vrfProvider.id.toUpperCase()})
                   </label>
                   <div className="relative group">
                     <div className="absolute -inset-0.5 bg-gradient-to-r from-neon-green to-neon-blue rounded-xl blur opacity-30 group-hover:opacity-50 transition duration-1000"></div>
@@ -107,7 +107,7 @@ export default function StakingModal({ onClose }: StakingModalProps) {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-neon-blue text-sm">Est. Rewards:</span>
-                      <span className="text-neon-green text-sm font-bold">{estimatedRewards} {vrfProvider.id === 'default' ? 'TOKEN' : vrfProvider.id.toUpperCase()}</span>
+                      <span className="text-neon-green text-sm font-bold">{estimatedRewards} {vrfProvider.id === 'flow' ? 'FLOW' : vrfProvider.id.toUpperCase()}</span>
                     </div>
                   </div>
                 </div>
@@ -151,10 +151,10 @@ export default function StakingModal({ onClose }: StakingModalProps) {
                   <h3 className="font-press-start text-neon-blue text-lg">Staking Successful!</h3>
                   <div className="space-y-2">
                     <p className="text-white text-sm">
-                      You have staked <span className="text-neon-green">{amount} {vrfProvider.id === 'default' ? 'TOKEN' : vrfProvider.id.toUpperCase()}</span> for <span className="text-neon-green">{duration} days</span>.
+                      You have staked <span className="text-neon-green">{amount} {vrfProvider.id === 'flow' ? 'FLOW' : vrfProvider.id.toUpperCase()}</span> for <span className="text-neon-green">{duration} days</span>.
                     </p>
                     <p className="text-white text-sm">
-                      Estimated rewards: <span className="text-neon-green">{estimatedRewards} {vrfProvider.id === 'default' ? 'TOKEN' : vrfProvider.id.toUpperCase()}</span>
+                      Estimated rewards: <span className="text-neon-green">{estimatedRewards} {vrfProvider.id === 'flow' ? 'FLOW' : vrfProvider.id.toUpperCase()}</span>
                     </p>
                     <p className="text-neon-purple text-xs mt-4">
                       Note: This is a mock staking mechanism for demonstration purposes.

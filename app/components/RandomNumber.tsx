@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { getRandomNumber, getCurrentVRFProvider, setVRFProvider } from '../utils/contracts';
 import ResultCard from './ResultCard';
-import { DEFAULT_VRF_PROVIDER, VRFProvider } from '../config/vrf-providers';
+import { FLOW_VRF_PROVIDER, VRFProvider } from '../config/vrf-providers';
 import VRFProviderSelector from './VRFProviderSelector';
 
 export default function RandomNumber() {
@@ -13,7 +13,7 @@ export default function RandomNumber() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showInfo, setShowInfo] = useState(false);
-  const [vrfProvider, setVRFProviderState] = useState<VRFProvider>(DEFAULT_VRF_PROVIDER);
+  const [vrfProvider, setVRFProviderState] = useState<VRFProvider>(FLOW_VRF_PROVIDER);
 
   const handleProviderChange = (provider: VRFProvider) => {
     setVRFProviderState(provider);
@@ -154,7 +154,7 @@ export default function RandomNumber() {
               </div>
               <div className="pt-4">
                 <a 
-                  href={vrfProvider.id === 'default' ? "https://en.wikipedia.org/wiki/Verifiable_random_function" : "#"}
+                  href={vrfProvider.id === 'flow' ? "https://developers.flow.com/evm/guides/vrf" : "#"}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-neon-purple hover:text-neon-pink transition-colors duration-300"
